@@ -1,0 +1,5 @@
+class QtroRemote
+{
+    PROP(QString A)
+    SLOT(long someFunc(QString s))
+};
