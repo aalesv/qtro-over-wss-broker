@@ -53,3 +53,5 @@ compile_commands.json
 *creator.user*
 
 *_qmlcache.qrc
+/qtro_client/build
+/qtro_server/build

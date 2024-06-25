@@ -1,5 +1,5 @@
 QT = core
-QT += remoteobjects websockets
+QT += network remoteobjects websockets widgets
 REPC_SOURCE = qtro.rep
 
 CONFIG += c++17 cmdline

@@ -105,6 +105,9 @@ int main(int argc, char *argv[])
         //Newschool - function template
         long r = qtrohelper::slot_sync(qtro_remote->someFunc("qqq"));
         qDebug() << r;
+        qDebug() << "set_B";
+        qtrohelper::slot_sync(qtro_remote->set_B(321));
+        qDebug() << qtrohelper::slot_sync(qtro_remote->get_B());
     }
     else
         qDebug() << "Connection to remote object failed";

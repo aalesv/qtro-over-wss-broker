@@ -1,5 +1,6 @@
 class QtroRemote
 {
     PROP(QString A)
+    SLOT(bool set_B(int val)) SLOT(int get_B())
     SLOT(long someFunc(QString s))
 };
