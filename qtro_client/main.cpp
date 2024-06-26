@@ -30,14 +30,17 @@ int main(int argc, char *argv[])
     QRemoteObjectHost node;
     //Mandatory
     node.setHostUrl(QUrl("node_url"), QRemoteObjectHost::AllowExternalRegistration);
+    node.setHeartbeatInterval(1000);
     //Enable remote object access
     node.enableRemoting(&qtro, QStringLiteral("Test1"));
-    QObject::connect(webSocket.data(), &QWebSocket::connected, &node,
-        [&node, &socket]()
-        {
-            //Run host node after connection is up
-            node.addHostSideConnection(&socket);
-    });
+    QObject::connect(webSocket.data(), &QWebSocket::textMessageReceived, &node,
+                     [&](QString message)
+                     {
+                        //Run host node after connection is up
+                        if (message == "FastECU_PTP_Autodiscovery")
+                            node.addHostSideConnection(&socket);
+                     }
+    );
     webSocket->open("wss://" + addr);
 
     return a.exec();
