@@ -10,6 +10,7 @@ CONFIG += c++17 cmdline
 
 SOURCES += \
         main.cpp \
+        qtrowrapper.cpp \
         websocketiodevice.cpp
 
 # Default rules for deployment.
@@ -19,4 +20,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     qtrohelper.hpp \
+    qtrowrapper.h \
     websocketiodevice.h

@@ -1,5 +1,8 @@
 #ifndef QTROHELPER_HPP
 #define QTROHELPER_HPP
+
+#include <QRemoteObjectPendingCallWatcher>
+
 namespace qtrohelper
 {
 //Convert QVariant to scalar templates
@@ -7,25 +10,25 @@ template <typename T>
 T qvariant_to_scalar(QVariant v);
 
 template <>
-long qvariant_to_scalar<long>(QVariant v)
+inline long qvariant_to_scalar<long>(QVariant v)
 {
     return v.toLongLong();
 }
 
 template <>
-int qvariant_to_scalar<int>(QVariant v)
+inline int qvariant_to_scalar<int>(QVariant v)
 {
     return v.toInt();
 }
 
 template <>
-bool qvariant_to_scalar<bool>(QVariant v)
+inline bool qvariant_to_scalar<bool>(QVariant v)
 {
     return v.toBool();
 }
 
 template <>
-QString qvariant_to_scalar<QString>(QVariant v)
+inline QString qvariant_to_scalar<QString>(QVariant v)
 {
     return v.toString();
 }

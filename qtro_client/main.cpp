@@ -3,7 +3,8 @@
 #include "QtWebSockets/QtWebSockets"
 #include <iostream>
 #include "websocketiodevice.h"
-#include "qtro.hpp"
+//#include "qtro.hpp"
+#include "qtrowrapper.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,36 +13,9 @@ int main(int argc, char *argv[])
     if (argc == 2)
         addr = QString(argv[1]);
 
-    std::cout << "Broker address is " << addr.toStdString() << std::endl;
+    std::cout << "Remote address is " << addr.toStdString() << std::endl;
 
-
-    QScopedPointer<QWebSocket> webSocket{new QWebSocket};
-
-    QSslConfiguration sslConfiguration;
-    sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);
-    webSocket->setSslConfiguration(sslConfiguration);
-
-    //Transport for remote object protocol
-    WebSocketIoDevice socket(webSocket.data());
-
-    QtroRemote qtro;
-
-    //Node in host mode
-    QRemoteObjectHost node;
-    //Mandatory
-    node.setHostUrl(QUrl("node_url"), QRemoteObjectHost::AllowExternalRegistration);
-    node.setHeartbeatInterval(1000);
-    //Enable remote object access
-    node.enableRemoting(&qtro, QStringLiteral("Test1"));
-    QObject::connect(webSocket.data(), &QWebSocket::textMessageReceived, &node,
-                     [&](QString message)
-                     {
-                        //Run host node after connection is up
-                        if (message == "FastECU_PTP_Autodiscovery")
-                            node.addHostSideConnection(&socket);
-                     }
-    );
-    webSocket->open("wss://" + addr);
+    QScopedPointer<QtroWrapper> qtroWrapper{new QtroWrapper(addr)};
 
     return a.exec();
 }
