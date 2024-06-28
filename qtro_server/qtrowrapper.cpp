@@ -1,8 +1,14 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 #include "qtrowrapper.h"
 
 QtroWrapper::QtroWrapper(QString peerAddress, QObject *parent)
     : QObject{parent}
     , peerAddress(peerAddress)
+    , webSocket(new QWebSocket("",QWebSocketProtocol::VersionLatest,this))
+    , socket(new WebSocketIoDevice(webSocket, webSocket))
 {
     if (this->peerAddress.startsWith("local:"))
     {
@@ -22,15 +28,15 @@ void QtroWrapper::startOverNetwok(void)
     QSslConfiguration sslConfiguration;
     sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);
     webSocket->setSslConfiguration(sslConfiguration);
-    QObject::connect(webSocket.data(), &QWebSocket::connected, &node,
+    QObject::connect(webSocket, &QWebSocket::connected, &node,
                      [&]()
                      {
                          //Run client node after socket is up
-                         node.addClientSideConnection(&socket);
+                         node.addClientSideConnection(socket);
                          sendAutoDiscoveryMessage();
                      });
     node.setHeartbeatInterval(1000);
-    QObject::connect(webSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
+    QObject::connect(webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
                      [=](QAbstractSocket::SocketError error){ qDebug() << error; });
     //WebSocket over SSL
     webSocket->open("wss://" + peerAddress);

@@ -1,3 +1,7 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
+
 // Copyright (C) 2019 Ford Motor Company
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 

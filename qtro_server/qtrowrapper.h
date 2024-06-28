@@ -29,8 +29,8 @@ public:
 signals:
 private:
     QString peerAddress;
-    QSharedPointer<QWebSocket> webSocket{new QWebSocket};
-    WebSocketIoDevice socket{webSocket.data()};
+    QWebSocket *webSocket;
+    WebSocketIoDevice *socket;
     QSharedPointer<QtroRemoteReplica> qtro_remote;
     QRemoteObjectNode node;
     void startOverNetwok(void);
