@@ -32,6 +32,9 @@ int main(int argc, char *argv[])
     qDebug() << "someFunc";
     long r = qtro_remote.someFunc("qqq");
     qDebug() << r;
+
+    qtro_remote.send_log_window_message("Remote utility connection works well");
+
     qDebug() << qtro_remote.someFunc("hello");
     qDebug() << "set_B";
     qtro_remote.set_B(321);

@@ -17,6 +17,7 @@ public:
     ~QtroWrapper();
     const QString autodiscoveryMessage = "FastECU_PTP_Autodiscovery";
     const QString remoteObjectName = "Test1";
+    const QString remoteObjectNameUtility = "Test1_Utility";
     const int heartbeatInterval = 1000;
 
     long someFunc(QString s)
@@ -25,14 +26,23 @@ public:
     {return qtrohelper::slot_sync(qtro_remote->get_B());}
     bool set_B(int val)
     {qtrohelper::slot_sync(qtro_remote->set_B(val));return true;}
+    bool send_log_window_message(QString message)
+    {
+        //Send remote log message in async way
+        qtro_remote_utility->send_log_window_message(message);
+        return true;
+    }
 
 signals:
 private:
     QString peerAddress;
     QWebSocket *webSocket;
-    WebSocketIoDevice *socket;
+    WebSocketIoDevice *socket_remote;
+    WebSocketIoDevice *socket_remote_utility;
     QSharedPointer<QtroRemoteReplica> qtro_remote;
-    QRemoteObjectNode node;
+    QSharedPointer<QtroRemoteUtilityReplica> qtro_remote_utility;
+    QRemoteObjectNode node_remote;
+    QRemoteObjectNode node_remote_utility;
     void startOverNetwok(void);
     void startLocal(void);
     void sendAutoDiscoveryMessage();

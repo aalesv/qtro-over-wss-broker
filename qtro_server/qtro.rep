@@ -4,3 +4,8 @@ class QtroRemote
     SLOT(bool set_B(int val)) SLOT(int get_B())
     SLOT(long someFunc(QString s))
 };
+
+class QtroRemoteUtility
+{
+    SLOT (bool send_log_window_message(QString message))
+}

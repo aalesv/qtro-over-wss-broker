@@ -38,4 +38,17 @@ private:
     QSharedPointer<SerialPortActions> serialPort;
 };
 
+class QtroRemoteUtility : public QtroRemoteUtilitySimpleSource
+{
+    Q_OBJECT
+public:
+    explicit QtroRemoteUtility(QObject *parent=nullptr)
+        : QtroRemoteUtilitySimpleSource(parent)
+        {qDebug() << "Utility started";}
+    ~QtroRemoteUtility()
+        {qDebug() << "Utility stopped";}
+    bool send_log_window_message(QString message) override
+        {qDebug() << "Received log message" << message; return true;}
+};
+
 #endif // QTRO_HPP

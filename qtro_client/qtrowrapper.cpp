@@ -4,7 +4,9 @@ QtroWrapper::QtroWrapper(QString peerAddress, QObject *parent)
     : QObject{parent}
     , peerAddress(peerAddress)
     , webSocket(new QWebSocket("",QWebSocketProtocol::VersionLatest,this))
-    , socket(new WebSocketIoDevice(webSocket, webSocket))
+    //Different nodes could run over the same WebSocket
+    , socket_remote(new WebSocketIoDevice(webSocket, webSocket))
+    , socket_utility(new WebSocketIoDevice(webSocket, webSocket))
 {
     if (this->peerAddress.startsWith("local:"))
     {
@@ -25,16 +27,22 @@ void QtroWrapper::startOverNetwok(void)
     sslConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);
     webSocket->setSslConfiguration(sslConfiguration);
     //Mandatory
-    node.setHostUrl(QUrl(nodeUrl), QRemoteObjectHost::AllowExternalRegistration);
-    node.setHeartbeatInterval(heartbeatInterval);
+    node_remote.setHostUrl(QUrl(nodeUrl), QRemoteObjectHost::AllowExternalRegistration);
+    node_utility.setHostUrl(QUrl(nodeUrlUtility), QRemoteObjectHost::AllowExternalRegistration);
+    node_remote.setHeartbeatInterval(heartbeatInterval);
+    node_utility.setHeartbeatInterval(heartbeatInterval);
     //Enable remote object access
-    node.enableRemoting(&qtro, remoteObjectName);
-    QObject::connect(webSocket, &QWebSocket::textMessageReceived, &node,
+    node_remote.enableRemoting(&qtro_remote, remoteObjectName);
+    node_utility.enableRemoting(&qtro_utility, remoteObjectNameUtility);
+    QObject::connect(webSocket, &QWebSocket::textMessageReceived, this,
                      [&](QString message)
                      {
                          //Run host node after connection is up
                          if (message == autodiscoveryMessage)
-                             node.addHostSideConnection(socket);
+                         {
+                             node_remote.addHostSideConnection(socket_remote);
+                             node_utility.addHostSideConnection(socket_utility);
+                         }
                      }
                      );
     webSocket->open("wss://" + peerAddress);
@@ -42,7 +50,15 @@ void QtroWrapper::startOverNetwok(void)
 
 void QtroWrapper::startLocal(void)
 {
-    node.setHostUrl(QUrl(peerAddress),
+    //Each node should run over distinct named pipe
+    QString remote_url = peerAddress+remoteObjectName;
+    QString utility_url = peerAddress+remoteObjectNameUtility;
+
+    node_remote.setHostUrl(QUrl(remote_url),
                     QRemoteObjectHost::BuiltInSchemasOnly);
-    node.enableRemoting(&qtro, remoteObjectName);
+    node_remote.enableRemoting(&qtro_remote, remoteObjectName);
+
+    node_utility.setHostUrl(QUrl(utility_url),
+                    QRemoteObjectHost::BuiltInSchemasOnly);
+    node_utility.enableRemoting(&qtro_utility, remoteObjectNameUtility);
 }
